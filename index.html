@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="uk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Buffalo · відео</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{color-scheme:dark}
+html,body{margin:0;height:100%;background:#0b1411;color:#ece7da;font-family:"Segoe UI",system-ui,sans-serif}
+body{display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+.c{max-width:320px}.i{font-size:44px}h1{font-size:22px;margin:12px 0 8px;color:#d8b46a}
+p{color:#8fa59a;line-height:1.5;margin:0 0 20px}
+button{background:#d8b46a;color:#1b1507;border:0;border-radius:12px;padding:12px 22px;font-size:16px;font-weight:600}
+</style></head><body>
+<div class="c" id="load"><p>Завантаження…</p></div>
+<div class="c" id="tech" hidden><div class="i">🔧</div><h1>Технічні роботи</h1>
+<p>Не хвилюйтесь, ваші замовлення збережені. Сервіс тимчасово недоступний, спробуйте за кілька хвилин.</p>
+<button onclick="check()">Спробувати ще</button></div>
+<script>
+// Адрес основного Mini App (Tailscale Funnel на сервере клуба)
+var MAIN="https://server.tail0ed03a.ts.net";
+if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand()}
+function show(t){document.getElementById("load").hidden=t;document.getElementById("tech").hidden=!t}
+function check(){
+  show(false);
+  var c=new AbortController(),t=setTimeout(function(){c.abort()},5000);
+  fetch(MAIN+"/api/ping",{cache:"no-store",signal:c.signal}).then(function(r){return r.json()}).then(function(j){
+    clearTimeout(t);
+    if(j&&j.ok){location.replace(MAIN+"/"+location.search+location.hash)}else show(true)
+  }).catch(function(){clearTimeout(t);show(true)})
+}
+check();
+</script></body></html>
