@@ -14,7 +14,7 @@ button,a.b{display:inline-block;background:#d8b46a;color:#1b1507;border:0;border
 <div class="c" id="load"><p>Завантаження…</p></div>
 <div class="c" id="tech" hidden><div class="i">🔧</div><h1>Технічні роботи</h1>
 <p>Не хвилюйтесь, ваші замовлення збережені. Сервіс тимчасово недоступний, спробуйте за кілька хвилин.</p>
-<button onclick="check()">Спробувати ще</button></div>
+<button onclick="check(1)">Спробувати ще</button></div>
 <div class="c" id="tg" hidden><div class="i">📲</div><h1>Відкрийте в Telegram</h1>
 <p>Цей сервіс працює тільки всередині Telegram. Натисніть кнопку нижче.</p>
 <a class="b" id="tglink" href="https://t.me/BuffaloUngvarVideoBot/app">Відкрити в Telegram</a></div>
@@ -29,14 +29,16 @@ function startParam(){
   var m=(location.hash+"&"+location.search).match(/(?:tgWebAppStartParam|startapp)=([A-Za-z0-9_-]+)/);
   return m?m[1]:"";
 }
-function check(){
-  show("load");
-  var c=new AbortController(),t=setTimeout(function(){c.abort()},5000);
-  fetch(MAIN+"/api/ping",{cache:"no-store",signal:c.signal}).then(function(r){return r.json()}).then(function(j){
+function check(n){
+  n=n||1;show("load");
+  var c=new AbortController(),t=setTimeout(function(){c.abort()},9000);
+  fetch(MAIN+"/api/ping?"+Date.now(),{cache:"no-store",signal:c.signal}).then(function(r){return r.json()}).then(function(j){
     clearTimeout(t);
-    if(j&&j.ok){location.replace(MAIN+"/"+location.search+location.hash)}else show("tech")
-  }).catch(function(){clearTimeout(t);show("tech")})
+    if(j&&j.ok){location.replace(MAIN+"/"+location.search+location.hash)}else fail(n)
+  }).catch(function(){clearTimeout(t);fail(n)})
 }
+// 3 попытки (таймаут 9 с, пауза 1 с), заглушка только если все неудачны
+function fail(n){if(n<3)setTimeout(function(){check(n+1)},1000);else show("tech")}
 if(!TG||!TG.initData){
   var sp=startParam();
   if(sp)document.getElementById("tglink").href=BOT+"?startapp="+sp;
