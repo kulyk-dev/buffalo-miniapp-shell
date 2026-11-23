@@ -45,5 +45,5 @@ if(!TG||!TG.initData){
   var sp=startParam();
   if(sp)document.getElementById("tglink").href=BOT+"?startapp="+sp;
   show("tg");
-}else check();
+}else location.replace(MAIN+"/"+location.search+location.hash);
 </script></body></html>
